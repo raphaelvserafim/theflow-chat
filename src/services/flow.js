@@ -3,13 +3,15 @@ import httpService from "@theflow/services/api";
 
 export class FlowService {
 
+
+  static async updateFlow(code, data) {
+    const response = await httpService.put(environment.API.FLOW.INFO + "/" + code, data);
+    return response.data;
+  }
+
   static async fetchGetFlow(code) {
-    try {
-      const response = await httpService.get(environment.API.FLOW.INFO + "/" + code);
-      return response.data;
-    } catch (error) {
-      return { status: 500, message: error.message }
-    }
+    const response = await httpService.get(environment.API.FLOW.INFO + "/" + code);
+    return response.data;
   }
 
   static async saveNodes(code, data) {

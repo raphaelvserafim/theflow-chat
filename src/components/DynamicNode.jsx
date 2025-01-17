@@ -10,7 +10,7 @@ import CustomAudioPlayer from './CustomAudioPlayer';
 export function DynamicNode({ id, data }) {
   const { type, onDelete, onAddConnection, onEdit } = data || {};
   const [anchorEl, setAnchorEl] = useState(null);
-  
+
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };

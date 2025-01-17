@@ -1,6 +1,6 @@
-import React, { useRef, useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Button, Grid, IconButton, InputAdornment, Popover, TextField } from '@mui/material';
+import { Grid, } from '@mui/material';
 
 import Cookies from "js-cookie";
 import environment from '@theflow/configs/environment';
@@ -10,8 +10,9 @@ import { toast } from 'react-toastify';
 import { Modal } from '@theflow/components/Modal';
 import { ReactFlowProvider } from 'react-flow-renderer';
 import { EditingNodesData } from '@theflow/components/EditingNodesData';
+import { MESSAGE_TYPE } from '@theflow/constant';
 
-Cookies.set(environment.COOKIES.SESSION, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoxLCJpYXQiOjE3MjQyMDI1OTIsImV4cCI6MTcyNDgwNzM5Mn0.idgwOGTnxhJrxlyqmhOQWsStZUisVMcqFk8wvDpSc1Q");
+Cookies.set(environment.COOKIES.SESSION, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTczNzEyOTY5MCwiZXhwIjoxNzM3NzM0NDkwfQ.78rRpq6rwcFPpX8BHfep2lFH_BEyBFzXhR1rwkRpc00");
 
 
 export function Flow() {
@@ -25,6 +26,7 @@ export function Flow() {
 
   const [searching, setSearching] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [gptKey, setGptKey] = useState(null);
 
 
   const onEmojiClick = useCallback((event) => {
@@ -32,16 +34,15 @@ export function Flow() {
   }, []);
 
   const save = useCallback(async (data) => {
-    console.log({ data })
     if (data?.type === "add") {
       try {
         setSavedNodes((nds) => [
           ...nds,
           {
             id: data.id,
-            position_x: data.position.x,
-            position_y: data.position.y,
-            text_content: null,
+            positionX: data.position.x,
+            positionY: data.position.y,
+            textContent: null,
             type: data.item.type,
           },
         ]);
@@ -74,8 +75,8 @@ export function Flow() {
             node.id === data.node.id
               ? {
                 ...node,
-                position_x: data.node.position.x,
-                position_y: data.node.position.y,
+                positionX: data.node.position.x,
+                positionY: data.node.position.y,
               }
               : node
           )
@@ -142,19 +143,17 @@ export function Flow() {
     if (data?.type === "addConnection") {
       const _node = savedNodes.find((e) => e.id === data.sourceId);
       const _edges = savedEdges.filter((e => e.source === data.sourceId));
-      console.log({ _edges })
-
-      const { position_x, position_y, id } = _node;
+      const { positionX, positionY, id } = _node;
       save({
         id: data.id,
-        text_content: null,
+        textContent: null,
         type: 'add',
         item: {
-          type: 'text_message',
+          type: MESSAGE_TYPE.TEXT,
         },
         position: {
-          x: position_x + 300,
-          y: ((position_y) + (103 * _edges.length)),
+          x: positionX + 300,
+          y: ((positionY) + (103 * _edges.length)),
         },
       });
       save({
@@ -187,20 +186,18 @@ export function Flow() {
 
 
 
-
-
   const saveText = useCallback(async () => {
     try {
       setSaving(true);
       const { id } = dataNodes;
       const { status, message } = await FlowService.updateContentNodes(code, id, {
-        text_content: textMessage,
-        save_answer: saveAnswer,
+        textContent: textMessage,
+        saveAnswer: saveAnswer,
       });
       if (status === 200) {
         toast.success(message);
         const updatedNodes = savedNodes.map((node) =>
-          node.id === id ? { ...node, text_content: textMessage, save_answer: saveAnswer } : node
+          node.id === id ? { ...node, textContent: textMessage, saveAnswer: saveAnswer } : node
         );
         setSavedNodes(updatedNodes);
       }
@@ -221,19 +218,24 @@ export function Flow() {
 
   }
 
-
   const changeSaveAnswer = (event) => {
     setSaveAnswer(Boolean(event?.target?.checked))
+  }
+
+
+  const saveKeyGpt = async (key) => {
+    const { status, message } = await FlowService.updateFlow(code, { key_gpt: key });
   }
 
   useEffect(() => {
     if (code) {
       setSearching(true);
-      FlowService.fetchGetFlow(code).then(({ status, message, nodes, edges }) => {
+      FlowService.fetchGetFlow(code).then(({ status, message, nodes, edges, api_key_gpt }) => {
         setSearching(false);
         if (status === 200) {
           setSavedEdges(edges);
           setSavedNodes(nodes);
+          setGptKey(api_key_gpt);
           return;
         }
         toast.error(message);
@@ -245,8 +247,12 @@ export function Flow() {
 
   return (
     <Grid style={{ display: 'flex', height: '100vh' }}>
-      <Sidebar />
-      {searching && <>Buscando...</>}
+      <Sidebar
+        key={code}
+        saveKey={saveKeyGpt}
+        gptKey={gptKey}
+      />
+
       {!searching && (
         <ReactFlowProvider>
           <MemoizedFlowEditor
@@ -261,7 +267,6 @@ export function Flow() {
 
 
       <Modal title="Editar" open={openModal} onClose={() => { setOpenModal(false); }}>
-
         {dataNodes && (
           <EditingNodesData
             dataNodes={dataNodes}

@@ -4,3 +4,4 @@ export * from "./FlowEditor";
 export * from "./MessageType";
 export * from "./Sidebar";
 export * from "./TabLabel";
+export * from "./Settings";

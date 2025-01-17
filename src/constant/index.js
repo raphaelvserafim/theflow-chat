@@ -4,7 +4,6 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import MenuIcon from '@mui/icons-material/Menu';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
-import HttpIcon from '@mui/icons-material/Http';
 import CallEndIcon from '@mui/icons-material/CallEnd';
 import FlagCircleIcon from '@mui/icons-material/FlagCircle';
 import MessageIcon from '@mui/icons-material/Message';
@@ -22,6 +21,8 @@ export const MESSAGE_TYPE = {
   START: "start",
 }
 
+
+
 const itemConfig = {
   TEXT_MESSAGE: { label: 'Texto', Icon: MessageIcon, category: 'message', show: true, },
   QUESTION_MESSAGE: { label: 'Perguntar', Icon: QuestionAnswerIcon, category: 'message', show: true, },
@@ -30,7 +31,7 @@ const itemConfig = {
   DOCUMENT_MESSAGE: { label: 'Documento', Icon: DescriptionIcon, category: 'message', show: true, },
   MENU_MESSAGE: { label: 'Menu', Icon: MenuIcon, category: 'message', show: true, },
   AI_MESSAGE: { label: 'AI', Icon: AutoFixHighIcon, category: 'special', show: true, },
-  API_REQUEST: { label: 'Request API', Icon: HttpIcon, category: 'special', show: true, },
+  // API_REQUEST: { label: 'Request API', Icon: HttpIcon, category: 'special', show: true, },
   END: { label: 'Encerrar', Icon: CallEndIcon, category: 'special', show: true, },
   START: { label: 'Iniciar', Icon: FlagCircleIcon, category: 'special', show: false, },
 };

@@ -46,7 +46,7 @@ export function EditingNodesData(props) {
       {props?.dataNodes?.type === MESSAGE_TYPE.IMAGE &&
         <Grid item xs={12} md={12} mb={2}>
           <SingleImageUpload
-            url={props?.dataNodes?.file_content?.url}
+            url={props?.dataNodes?.fileContent?.url}
             onFile={props?.onUploadFileNodes}
           />
         </Grid>
@@ -55,8 +55,8 @@ export function EditingNodesData(props) {
         <Grid item xs={12} md={12} mb={2}>
           <SingleFileUpload
             type={props?.dataNodes?.type}
-            url={props?.dataNodes?.file_content?.url}
-            metaData={props?.dataNodes?.file_content?.metaData}
+            url={props?.dataNodes?.fileContent?.url}
+            metaData={props?.dataNodes?.fileContent?.metaData}
             onFile={props?.onUploadFileNodes}
           />
         </Grid>
@@ -65,7 +65,7 @@ export function EditingNodesData(props) {
       {(props?.dataNodes?.type === MESSAGE_TYPE.AUDIO) &&
         <Grid item xs={12} md={12} mb={2}>
           <SingleAudioUpload
-            url={props?.dataNodes?.file_content?.url}
+            url={props?.dataNodes?.fileContent?.url}
             onFile={props?.onUploadFileNodes}
           />
         </Grid>

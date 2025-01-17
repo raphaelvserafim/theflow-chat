@@ -54,8 +54,11 @@ function FlowEditorBase(props) {
     props.save({ type: "deleteEdge", id: event.id, source: event.source, target: event.target });
   }, [props]);
 
+
   const addConnection = useCallback((sourceId) => {
     const newId = generateId();
+    console.log({sourceId})
+  
     props.save({ type: "addConnection", id: newId, sourceId });
   }, [generateId, props]);
 
@@ -66,26 +69,27 @@ function FlowEditorBase(props) {
         label: 'Node',
         type: data.type,
         outputs: ['output-0'],
-        text_content: data?.text_content || null,
-        file_content: data?.file_content || null,
-        save_answer: data?.save_answer,
+        textContent: data?.textContent || null,
+        fileContent: data?.fileContent || null,
+        saveAnswer: data?.saveAnswer,
         onDelete: handleDeleteNode,
         onAddConnection: addConnection,
         onEdit: () => props?.onEdit({ id: data.id, type: data.type }),
       },
       position: {
-        x: data.position_x,
-        y: data.position_y,
+        x: data.positionX || 0,
+        y: data.positionY || 0,
       },
       type: 'dynamic',
       sourcePosition: Position.Right,
       targetPosition: Position.Left,
-      markerStart: data.type === 'start',
+      markerStart: data.type === MESSAGE_TYPE.START,
     };
     return node;
   }, [addConnection, handleDeleteNode, props]);
 
-  const [{ isOver }, drop] = useDrop({
+
+  const [, drop] = useDrop({
     accept: Object.values(ItemTypes),
     drop: (item, monitor) => {
       if (monitor.didDrop()) return;
@@ -93,7 +97,6 @@ function FlowEditorBase(props) {
       const clientOffset = monitor.getClientOffset();
       if (!clientOffset) return;
 
-      // Usar o método 'project' para converter as coordenadas absolutas para as coordenadas do fluxo
       const flowCoords = project(clientOffset);
       const newId = generateId();
 
@@ -113,7 +116,7 @@ function FlowEditorBase(props) {
     }
 
     if (sourceNode.data.type === MESSAGE_TYPE.MENU) {
-      if (targetNode.data.type !== 'text_message') {
+      if (targetNode.data.type !== MESSAGE_TYPE.TEXT) {
         toast.error('menu_message só pode se conectar a text_message!');
         return;
       }
@@ -146,7 +149,7 @@ function FlowEditorBase(props) {
       }));
       setEdges(_edges);
     }
-  }, [props.nodes, props.edges, processNodeData, handleDeleteEdge, setNodes, setEdges]);
+  }, [props?.nodes, props?.edges, processNodeData, handleDeleteEdge, setNodes, setEdges]);
 
   return (
     <div ref={drop} style={{ flex: 1 }} key={props?.code}>

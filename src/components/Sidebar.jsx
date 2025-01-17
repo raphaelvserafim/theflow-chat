@@ -7,11 +7,11 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import { messageTypes, specialItems } from '@theflow/constant';
-import { TabLabel, MessageType } from '@theflow/components';
+import { TabLabel, MessageType, AccordionSettings } from '@theflow/components';
 
-export function Sidebar() {
+export function Sidebar(props) {
   const [tab, setTab] = useState('messages');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const handleChangeTab = (event, newValue) => {
     setTab(newValue);
@@ -68,7 +68,7 @@ export function Sidebar() {
             letterSpacing: '1px',
           }}
         >
-          ::theflow::
+          theflow
         </Typography>
         <Divider />
         <Tabs
@@ -131,7 +131,7 @@ export function Sidebar() {
         sx={{
           flexGrow: 1,
           overflowY: 'auto',
-          padding: 2,
+          padding: 1,
         }}
       >
         {tab === 'messages' && messageTypes.map(({ type, label, Icon }) => (
@@ -141,7 +141,12 @@ export function Sidebar() {
           return show ? <MessageType key={type} type={type} label={label} Icon={Icon} /> : null;
         })}
 
-        {tab === 'settings' && <>EM BREVE</>}
+        {tab === 'settings' && (
+          <AccordionSettings
+            save={(key) => props?.saveKey(key)}
+            gptKey={props?.gptKey}
+          />
+        )}
       </Box>
     </Box>
   );
